@@ -19,13 +19,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import io.realm.Realm;
+import io.realm.RealmQuery;
 import io.realm.RealmResults;
 
 public class InputActivity extends AppCompatActivity {
 
     private int mYear, mMonth, mDay, mHour, mMinute;
-    private Button mDateButton, mTimeButton;
-    private EditText mTitleEdit, mContentEdit, mCategoryEdit;
+    private Button mDateButton, mTimeButton,mSearchButton;
+    private EditText mTitleEdit, mContentEdit, mCategoryEdit,mSearchEdit;
     private Task mTask;
     private View.OnClickListener mOnDateClickListener = new View.OnClickListener() {
         @Override
@@ -70,6 +71,22 @@ public class InputActivity extends AppCompatActivity {
         }
     };
 
+    private View.OnClickListener mOnSearchClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Realm realm = Realm.getDefaultInstance();
+
+            // Build the query looking at all users:
+            RealmQuery<Task> query = realm.where(Task.class);
+
+            // Add query conditions:
+            query.equalTo("category","mSearchEdit");
+
+            // Execute the query:
+            RealmResults<Task> results = query.findAll();
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,10 +104,14 @@ public class InputActivity extends AppCompatActivity {
         mDateButton.setOnClickListener(mOnDateClickListener);
         mTimeButton = (Button)findViewById(R.id.times_button);
         mTimeButton.setOnClickListener(mOnTimeClickListener);
+        mSearchButton = (Button)findViewById(R.id.search_button);
+        mSearchButton.setOnClickListener(mOnSearchClickListener);
         findViewById(R.id.done_button).setOnClickListener(mOnDoneClickListener);
         mTitleEdit = (EditText)findViewById(R.id.title_edit_text);
         mContentEdit = (EditText)findViewById(R.id.content_edit_text);
         mCategoryEdit = (EditText)findViewById(R.id.category_edit_text);
+        mSearchEdit = (EditText)findViewById(R.id.search_edit_text);
+
 
         // EXTRA_TASK から Task の id を取得して、 id から Task のインスタンスを取得する
         Intent intent = getIntent();
