@@ -10,7 +10,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Button;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -21,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     public final static String EXTRA_TASK = "jp.techacademy.shohei.yamamoto.taskapp.Task";
 
     private Realm mRealm;
+    private Button mSearchButton;
+    private EditText mSearchEdit;
     private RealmChangeListener mRealmListener = new RealmChangeListener() {
         @Override
         public void onChange(Object element) {
@@ -47,6 +51,11 @@ public class MainActivity extends AppCompatActivity {
         // Realmの設定
         mRealm = Realm.getDefaultInstance();
         mRealm.addChangeListener(mRealmListener);
+
+        mSearchEdit = (EditText)findViewById(R.id.search_edit_text);
+        mSearchButton = (Button)findViewById(R.id.search_button);
+        mSearchButton.setOnClickListener(mOnSearchClickListener);
+
 
         // ListViewの設定
         mTaskAdapter = new TaskAdapter(MainActivity.this);
@@ -126,6 +135,23 @@ public class MainActivity extends AppCompatActivity {
         // 表示を更新するために、アダプターにデータが変更されたことを知らせる
         mTaskAdapter.notifyDataSetChanged();
     }
+
+    private View.OnClickListener mOnSearchClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            String text1 = mSearchEdit.getText().toString();
+
+            // Build the query looking at all users:
+            RealmResults<Task> searchRealmResults = mRealm.where(Task.class).equalTo("category",text1).findAll().sort("date", Sort.DESCENDING);
+
+            mTaskAdapter.setTaskList(mRealm.copyFromRealm(searchRealmResults));
+            // TaskのListView用のアダプタに渡す
+            mListView.setAdapter(mTaskAdapter);
+            // 表示を更新するために、アダプターにデータが変更されたことを知らせる
+            mTaskAdapter.notifyDataSetChanged();
+        }
+    };
 
     @Override
     protected void onDestroy() {

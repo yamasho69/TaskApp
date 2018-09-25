@@ -10,9 +10,8 @@ public class Task extends RealmObject implements Serializable {
     private String title; // タイトル
     private String contents; // 内容
     private String category; //カテゴリ
-    private String search; //検索用
+    //private String search; //検索用
     private Date date; // 日時
-
 
     // id をプライマリーキーとして設定
     @PrimaryKey
@@ -36,13 +35,6 @@ public class Task extends RealmObject implements Serializable {
 
     public String getCategory() {
         return category;
-    }
-
-    public void setSearch(String search) {
-        this.search = search;
-    }
-    public String getSearch() {
-        return search;
     }
 
     public void setCategory(String category) {
